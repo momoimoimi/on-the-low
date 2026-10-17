@@ -9,6 +9,7 @@ index.html        ページの骨組み
 css/style.css     色・フォント・レイアウト
 js/scene.js       3Dの秘密基地とももいもいみ（Three.js）
 js/radio.js       基地ラジオ（Web Audioで音を合成するシーケンサー）
+docs/concept.md   コンセプトと仕様、進め方の決めごと
 ```
 
 ラジオが音を鳴らすたびに `radio:step` イベントを出して、3Dシーンがそれを受けて跳ねたり光ったりしています。
