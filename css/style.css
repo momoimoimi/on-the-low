@@ -264,6 +264,24 @@ button.tape:hover { border-color: var(--tape); }
 .foundlist li.got { border-style: solid; border-color: var(--momo); color: var(--fog); font-family: var(--f-body); letter-spacing: 0; }
 .foundlist li.got::before { content: "◆ "; color: var(--momo); }
 
+/* ---------- 基地だより ---------- */
+.news-page { border-top: 0; }
+.news { display: grid; gap: 16px; margin-top: 28px; max-width: 720px; }
+.news-item {
+  position: relative; background: var(--cave); border: 1px solid var(--rock); border-radius: 6px;
+  padding: 18px 20px 16px; display: grid; gap: 6px;
+}
+.news-item::before {   /* a strip of tape holding the note to the wall */
+  content: ""; position: absolute; top: -7px; left: 22px; width: 54px; height: 14px;
+  background: var(--momo); opacity: .55; transform: rotate(-4deg);
+}
+.news-item time { font-family: var(--f-mono); font-size: 12px; color: var(--dim); letter-spacing: .08em; font-variant-numeric: tabular-nums; }
+.news-item h3 { font-family: var(--f-display); font-weight: 400; font-size: 20px; line-height: 1.35; margin: 0; }
+.news-item p { margin: 0; }
+.news-more { margin-top: 18px; }
+footer a { color: var(--dim); }
+footer a:hover { color: var(--fog); }
+
 /* ---------- Lift between floors ---------- */
 .lift { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
 .lift-door {
