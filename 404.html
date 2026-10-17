@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+  // This page can be shown at any depth of address, so point relative links at the site root
+  (function () {
+    var b = document.createElement('base');
+    b.href = location.hostname.endsWith('github.io') ? '/on-the-low/' : '/';
+    document.head.appendChild(b);
+  })();
+</script>
+<title>B4 | on the low</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#15121f">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .lost { min-height: calc(100vh - 140px); display: grid; align-content: center; padding-block: 56px; }
+  .lost .wrap { display: grid; gap: 18px; justify-items: start; }
+  .b4 { font-family: var(--f-display); font-size: clamp(120px, 30vw, 260px); line-height: .85; margin: 0; color: var(--rock); letter-spacing: -.03em; }
+  .lost p { margin: 0; max-width: 30em; }
+  .scene404 { position: relative; width: 220px; height: 150px; max-width: 100%; }
+  .scene404 .leaf { position: absolute; left: 112px; top: 18px; width: 34px; height: 30px; background: var(--moss); clip-path: polygon(0 100%, 100% 0, 45% 100%); transform-origin: 0 100%; animation: peek 5s ease-in-out infinite; }
+  .scene404 .rock { position: absolute; inset: 40px 0 0; background: linear-gradient(120deg, #4a4068 0 40%, #3a3254 40% 70%, #2f2846 70%); clip-path: polygon(8% 100%, 18% 22%, 48% 0, 80% 12%, 96% 60%, 100% 100%); }
+  @keyframes peek { 0%, 70%, 100% { transform: translateY(14px); } 78%, 92% { transform: translateY(0) rotate(-6deg); } }
+  @media (prefers-reduced-motion: reduce) { .scene404 .leaf { animation: none; transform: translateY(6px); } }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="wrap">
+    <a class="mark" href="index.html" aria-label="on the low トップへ">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 22,9 18,21 6,21 2,9" fill="#ff9f8c"/><polygon points="12,2 22,9 12,12" fill="#ffc2b4"/><polygon points="2,9 12,12 6,21" fill="#e07d6c"/></svg>
+      on the low
+    </a>
+    <nav class="floors" aria-label="フロア">
+      <a href="index.html"><b>B1</b>入口</a>
+      <a href="music.html"><b>B2</b>音源ルーム</a>
+      <a href="explore.html"><b>B3</b>探検</a>
+    </nav>
+  </div>
+</div>
+
+<main class="lost">
+  <div class="wrap">
+    <span class="eyebrow">404 / ここはどこ</span>
+    <p class="b4" aria-hidden="true">B4</p>
+    <h1 class="h-room">そんな階はない。</h1>
+    <p>エレベーターが、行き先のない階で止まってしまった。岩のうしろに、だれかいる気がするけど。</p>
+    <div class="scene404" aria-hidden="true"><i class="leaf"></i><i class="rock"></i></div>
+    <a class="btn" href="index.html">B1 入口へもどる</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© on the low</span>
+    <span>ひっそり営業中</span>
+  </div>
+</footer>
+</body>
+</html>
