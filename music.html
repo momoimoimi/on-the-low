@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>音源ルーム | on the low</title>
+<meta name="description" content="on the low の地下2階。ももいもいみが音を聴く部屋。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="bar">
+  <div class="wrap">
+    <a class="mark" href="index.html" aria-label="on the low トップへ">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 22,9 18,21 6,21 2,9" fill="#ff9f8c"/><polygon points="12,2 22,9 12,12" fill="#ffc2b4"/><polygon points="2,9 12,12 6,21" fill="#e07d6c"/></svg>
+      on the low
+    </a>
+    <nav class="floors" aria-label="フロア">
+      <a href="index.html"><b>B1</b>入口</a>
+      <a href="music.html" aria-current="page"><b>B2</b>音源ルーム</a>
+      <a href="explore.html"><b>B3</b>探検</a>
+    </nav>
+  </div>
+</div>
+
+<header class="room-hero">
+  <canvas id="room" aria-label="音源ルーム。大きなスピーカーの横で、ももいもいみが音を聴いている。宙に浮いた石が音に合わせて割れるように広がる"></canvas>
+  <div class="room-title">
+    <div class="wrap">
+      <span class="eyebrow">secret base / B2 音源ルーム</span>
+      <h1 class="h-room">音源ルーム</h1>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="block player-block">
+    <div class="wrap">
+      <div class="player" id="player" aria-live="polite">
+        <div class="now">
+          <span class="eyebrow" id="now-kind">NOW PLAYING</span>
+          <p class="now-title" id="now-title">テープを選んでね</p>
+          <p class="now-meta" id="now-meta">棚のテープを押すと、ここで鳴るよ。</p>
+        </div>
+        <div class="transport">
+          <button class="btn" id="toggle" type="button" disabled>▶ 再生</button>
+          <div class="progress" aria-hidden="true"><i id="progress"></i></div>
+        </div>
+      </div>
+      <audio id="audio" preload="none"></audio>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <span class="eyebrow">shelf 01</span>
+      <h2>作者の曲</h2>
+      <p class="lead">ここに作者の曲が並ぶ。いまは基地の奥で録音中。</p>
+      <div class="shelf" id="shelf-tracks"></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <span class="eyebrow">shelf 02</span>
+      <h2>基地テープ</h2>
+      <p class="lead">ももいもいみが基地でこっそり録ったビート。押すたびにその場で鳴らしている。</p>
+      <div class="shelf" id="shelf-tapes"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© on the low</span>
+    <span>ひっそり営業中</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="js/synth.js"></script>
+<script src="js/momo.js"></script>
+<script src="js/finds.js"></script>
+<script src="music/tracks.js"></script>
+<script src="js/music.js"></script>
+</body>
+</html>
