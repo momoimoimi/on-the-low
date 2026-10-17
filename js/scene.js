@@ -21,7 +21,7 @@
   const lantern = new THREE.PointLight(0xff9f8c, 0.9, 9);
   lantern.position.set(-2.2, 1.6, 1.2); scene.add(lantern);
 
-  const flat = (color, extra = {}) => new THREE.MeshStandardMaterial(Object.assign({ color, flatShading: true, roughness: 0.95, metalness: 0 }, extra));
+  const flat = OTL.flat;
 
   // Ground: a faceted bowl that rises into cave walls
   const ground = new THREE.PlaneGeometry(34, 34, 26, 26);
@@ -90,27 +90,13 @@
   const post = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 1.4, 5), flat(0x4a4064));
   post.position.set(-2.2, 0.7, 1.2); scene.add(post);
 
-  // Momoimoimi
-  const momo = new THREE.Group();
-  const parts = [];
-  const add = (geo, mat, setup) => { const m = new THREE.Mesh(geo, mat); setup && setup(m); momo.add(m); parts.push(m); return m; };
-  const body = add(new THREE.IcosahedronGeometry(0.9, 1), flat(0xff9f8c), m => m.scale.set(1, 0.95, 0.92));
-  add(new THREE.ConeGeometry(0.06, 0.32, 4), flat(0x7a5a48), m => m.position.set(0, 0.95, 0));
-  add(new THREE.ConeGeometry(0.2, 0.6, 4), flat(0x6fd6b8), m => { m.position.set(0.22, 1.02, 0); m.rotation.z = -1.1; m.scale.z = 0.35; });
-  const eyeMat = flat(0x1a1626);
-  [-0.28, 0.28].forEach(x => add(new THREE.SphereGeometry(0.075, 6, 4), eyeMat, m => m.position.set(x, 0.08, 0.83)));
-  const cheekMat = flat(0xff7f86, { emissive: 0xff7f86, emissiveIntensity: 0.2 });
-  [-0.5, 0.5].forEach(x => add(new THREE.CircleGeometry(0.11, 6), cheekMat, m => { m.position.set(x, -0.1, 0.74); m.rotation.y = x * 1.1; }));
-  const phoneMat = flat(0x2c2640);
-  add(new THREE.TorusGeometry(0.98, 0.07, 4, 14, Math.PI), phoneMat);
-  [-1, 1].forEach(s => add(new THREE.CylinderGeometry(0.24, 0.24, 0.2, 6), flat(0x9d8cff), m => { m.position.set(0.97 * s, 0, 0); m.rotation.z = Math.PI / 2; }));
-  [-0.35, 0.35].forEach(x => add(new THREE.DodecahedronGeometry(0.2, 0), flat(0xe8857a), m => m.position.set(x, -0.85, 0.15)));
+  // Momoimoimi, with its real polygon count on the ID card
+  const polyEl = document.getElementById('polycount');
+  const { group: momo, body } = OTL.createMomo(({ tris }) => {
+    if (polyEl) polyEl.textContent = tris.toLocaleString('ja-JP') + ' 枚（実測）';
+  });
   momo.position.set(0, 0.98, 0.4);
   scene.add(momo);
-
-  // Real polygon count for the ID card
-  const tris = parts.reduce((n, m) => n + (m.geometry.index ? m.geometry.index.count : m.geometry.attributes.position.count) / 3, 0);
-  document.getElementById('polycount').textContent = tris.toLocaleString('ja-JP') + ' 枚（実測）';
 
   // Fireflies
   const ffCount = 70, ffPos = new Float32Array(ffCount * 3), ffSeed = [];
@@ -182,7 +168,7 @@
     momo.position.x += (outX - momo.position.x) * 0.08;
 
     momo.position.y = 0.98 + Math.sin(t * 2) * 0.04 * sway + kickPulse * 0.16;
-    body.scale.y = 0.95 - kickPulse * 0.06;
+    body.scale.y = 1 - kickPulse * 0.06;
     // Face whoever is looking; lean toward the open side when sneaking
     momo.rotation.y += ((peek * 0.6 + Math.sin(t * 0.5) * 0.12 * sway) - momo.rotation.y) * 0.05;
     momo.rotation.z = Math.sin(t * 1.6) * 0.04 * sway - momo.position.x * 0.12;

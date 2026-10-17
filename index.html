@@ -18,9 +18,10 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 22,9 18,21 6,21 2,9" fill="#ff9f8c"/><polygon points="12,2 22,9 12,12" fill="#ffc2b4"/><polygon points="2,9 12,12 6,21" fill="#e07d6c"/></svg>
       on the low
     </a>
-    <nav aria-label="ページ内">
-      <a href="#momoimoimi">CHARA</a>
-      <a href="#radio">RADIO</a>
+    <nav class="floors" aria-label="フロア">
+      <a href="index.html" aria-current="page"><b>B1</b>入口</a>
+      <a href="music.html"><b>B2</b>音源ルーム</a>
+      <a href="explore.html"><b>B3</b>探検</a>
     </nav>
   </div>
 </div>
@@ -30,7 +31,7 @@
   <span class="peek-hint" aria-hidden="true">← のぞいてみて →</span>
   <div class="hero-copy">
     <div class="wrap">
-      <span class="eyebrow">secret base / B3F</span>
+      <span class="eyebrow">secret base / B1 入口</span>
       <h1>on the <span class="low">low</span></h1>
       <p>ひっそりとした秘密基地。ローポリと低い音でできた、ももいもいみの隠れ家へようこそ。</p>
       <a class="btn" href="#radio">基地ラジオを聴く</a>
@@ -99,6 +100,9 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="js/synth.js"></script>
+<script src="js/momo.js"></script>
 <script src="js/radio.js"></script>
 <script src="js/scene.js"></script>
 </body>

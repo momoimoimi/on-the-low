@@ -39,12 +39,16 @@ a { color: inherit; }
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--rock);
 }
-.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding-block: 12px; }
 .mark { font-family: var(--f-display); font-size: 18px; letter-spacing: .02em; text-decoration: none; display: flex; align-items: center; gap: 10px; }
 .mark svg { width: 22px; height: 22px; }
-.bar nav { display: flex; gap: 20px; font-family: var(--f-mono); font-size: 13px; letter-spacing: .08em; }
-.bar nav a { text-decoration: none; color: var(--dim); }
-.bar nav a:hover { color: var(--fog); }
+/* Floors: the site is a base going down, B1 → B3 */
+.floors { display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; }
+.floors a { white-space: nowrap; text-decoration: none; color: var(--dim); display: flex; align-items: baseline; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid transparent; }
+.floors b { font-family: var(--f-mono); font-weight: 500; font-size: 11px; letter-spacing: .08em; color: var(--glow); }
+.floors a:hover { color: var(--fog); }
+.floors a[aria-current="page"] { color: var(--fog); border-color: var(--rock); background: var(--cave); }
+.floors a[aria-current="page"] b { color: var(--momo); }
 
 /* Hero */
 .hero { position: relative; height: clamp(440px, 72vh, 680px); overflow: hidden; }
@@ -138,7 +142,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 @media (max-width: 760px) {
   .chara { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .bar nav { gap: 14px; }
+  .floors { gap: 2px; }
+  .floors a { padding: 4px 8px; }
   section.block { padding-block: 56px; }
   .onair { margin-left: 0; }
 }
