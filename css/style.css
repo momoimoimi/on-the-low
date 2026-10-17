@@ -234,6 +234,29 @@ button.tape:hover { border-color: var(--tape); }
 .foundlist li.got { border-style: solid; border-color: var(--momo); color: var(--fog); font-family: var(--f-body); letter-spacing: 0; }
 .foundlist li.got::before { content: "◆ "; color: var(--momo); }
 
+/* ---------- Lift between floors ---------- */
+.lift { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+.lift-door {
+  position: absolute; top: 0; bottom: 0; width: 50.5%;
+  background:
+    linear-gradient(135deg, transparent 49.5%, rgba(255,255,255,.035) 50%, transparent 50.5%) 0 0 / 160px 220px,
+    linear-gradient(60deg, var(--cave), var(--night));
+  transition: transform .42s cubic-bezier(.7, 0, .3, 1);
+}
+.lift-door.left { left: 0; transform: translateX(-101%); border-right: 1px solid var(--rock); }
+.lift-door.right { right: 0; transform: translateX(101%); border-left: 1px solid var(--rock); }
+.lift.closed .lift-door { transform: none; }
+.lift-panel {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: grid; justify-items: center; gap: 4px;
+  opacity: 0; transition: opacity .2s;
+}
+.lift.closed .lift-panel { opacity: 1; transition-delay: .18s; }
+.lift.arrived .lift-panel { transition-delay: 0s; }
+.lift-arrow { font-family: var(--f-mono); font-size: 14px; color: var(--moss); }
+.lift-floor { font-family: var(--f-display); font-weight: 400; font-size: 72px; line-height: 1; color: var(--momo); font-variant-numeric: tabular-nums; }
+.lift-name { font-size: 14px; color: var(--dim); letter-spacing: .1em; }
+
 footer { border-top: 1px solid var(--rock); padding-block: 28px 40px; }
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-family: var(--f-mono); font-size: 12px; color: var(--dim); letter-spacing: .06em; }
 
