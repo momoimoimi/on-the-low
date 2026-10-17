@@ -137,6 +137,22 @@
     label: `TAPE ${String(i + 1).padStart(2, '0')}`, title: t.title, meta: `${t.bpm} BPM`, color: t.color,
     onPlay: el => play('tape', t, el)
   })));
+  // A tape that is only on the shelf from 2 to 5 in the morning
+  const LATE = {
+    id: 'late', title: '午前3時のテープ', bpm: 64, color: 'var(--glow)', note: '深夜にしか棚にあらわれないテープ',
+    parts: [
+      P(['................', '.........x......', '................', '....x...........', 'x...............',
+         '......x.......x.', '................', 'x...............']),
+      P(['............x...', '................', '........x.......', '................', 'x.......x.......',
+         '......x.......x.', '................', 'x.......x.......'])
+    ]
+  };
+  if (OTL.time && OTL.time.phase === 'deep') {
+    tapesShelf.appendChild(tapeEl({
+      label: 'TAPE 3:00', title: LATE.title, meta: `${LATE.bpm} BPM / 深夜だけ`, color: LATE.color,
+      onPlay: el => play('tape', LATE, el)
+    }));
+  }
   if (OTL.finds.has('tape')) {
     tapesShelf.appendChild(tapeEl({
       label: 'TAPE ??', title: SECRET.title, meta: `${SECRET.bpm} BPM / B3で発見`, color: SECRET.color,
@@ -231,6 +247,11 @@
 
   let hop = 0;
   window.addEventListener('radio:step', e => { if (e.detail.kicked) hop = 1; });
+  // By day it dozes until something plays
+  const day = OTL.time && OTL.time.phase === 'day';
+  const zzz = OTL.createZzz();
+  zzz.group.position.set(0.3, 1.35, 0.6);
+  scene.add(zzz.group);
 
   const clock = new THREE.Clock();
   let lvl = 0;
@@ -258,7 +279,9 @@
     cones.forEach(c => { c.scale.y = 1 + lvl * 2.2; });
     momo.position.y = 0.6 + hop * 0.1 + Math.sin(t * 2) * 0.02 * sway;
     body.scale.y = 1 - hop * 0.06;
-    momo.rotation.z = Math.sin(t * 3.2) * lvl * 0.25;
+    const dozing = day && lvl < 0.02 && !isPlaying();
+    momo.rotation.z += ((dozing ? 0.3 : Math.sin(t * 3.2) * lvl * 0.25) - momo.rotation.z) * 0.08;
+    zzz.update(t, dozing && !reduce);
 
     renderer.render(scene, camera);
     requestAnimationFrame(frame);

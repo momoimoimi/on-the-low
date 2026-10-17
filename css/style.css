@@ -75,6 +75,10 @@ h1 {
 h1 .low { color: var(--momo); }
 .hero-copy p { margin: 0; max-width: 34em; color: var(--dim); }
 .hero-copy .btn { pointer-events: auto; justify-self: start; margin-top: 6px; }
+.time-note { font-family: var(--f-mono); font-size: 12px; letter-spacing: .04em; color: var(--moss) !important; }
+.time-note:empty { display: none; }
+[data-phase="day"] .idcard header b { color: var(--dim); }
+[data-phase="deep"] .idcard header b { color: var(--glow); }
 
 .btn {
   font: 500 14px/1 var(--f-body);

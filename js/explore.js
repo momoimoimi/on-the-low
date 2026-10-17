@@ -286,7 +286,11 @@
     { room: radioRoom, hide: [-0.6, 0.55, 0.15], out: [-0.6, 0.5, 2.0] },   // behind the radio
     { room: bedRoom, hide: [0.9, 0.55, -0.35], out: [1.4, 0.5, 1.9] }       // behind the bed
   ];
-  const spot = HIDES[Math.floor(Math.random() * HIDES.length)];
+  // By day it is always asleep behind its bed, with z's giving it away
+  const phase = OTL.time ? OTL.time.phase : 'night';
+  const spot = phase === 'day' ? HIDES[2] : HIDES[Math.floor(Math.random() * HIDES.length)];
+  const zzz = OTL.createZzz();
+  scene.add(zzz.group);
   const hidePos = at(spot.room, ...spot.hide), outPos = at(spot.room, ...spot.out);
   momo.rotation.y = -rad(spot.room.deg);
   scene.add(momo);
@@ -405,7 +409,7 @@
 
     crystals.forEach(c => {
       c.pulse *= 0.93;
-      c.mat.emissiveIntensity = 0.2 + c.pulse * 1.2;
+      c.mat.emissiveIntensity = (phase === 'deep' ? 0.45 : 0.2) + c.pulse * 1.2;
       c.light.intensity = c.pulse * 1.6;
     });
 
@@ -422,6 +426,8 @@
     momo.position.y += Math.sin(t * 2) * 0.02 + (momoComing ? Math.abs(Math.sin(momoOut * Math.PI * 3)) * 0.35 : 0);
     if (!momoOut && !reduce) momo.position.y += Math.max(0, Math.sin(t * 0.7)) ** 12 * 0.25;   // a quick peek now and then
     body.scale.y = 1 + Math.sin(t * 3) * 0.015;
+    zzz.group.position.copy(momo.position).setY(momo.position.y + 0.75);
+    zzz.update(t, phase === 'day' && !momoOut && !reduce);
 
     renderer.render(scene, camera);
     requestAnimationFrame(frame);

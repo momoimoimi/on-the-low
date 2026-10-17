@@ -59,4 +59,36 @@
 
     return { group, body };
   };
+
+  // Sleeping z's that drift up from a point. update(t, on) each frame.
+  OTL.createZzz = () => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 64;
+    const x = c.getContext('2d');
+    x.fillStyle = '#ece6f6';
+    x.font = '700 44px "DM Mono", monospace';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText('z', 32, 34);
+    const tex = new THREE.CanvasTexture(c);
+    const group = new THREE.Group();
+    const zs = [0, 1, 2].map(i => {
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0, depthWrite: false }));
+      group.add(s);
+      return { s, off: i / 3 };
+    });
+    let fade = 0;
+    return {
+      group,
+      update(t, on) {
+        fade += ((on ? 1 : 0) - fade) * 0.05;
+        zs.forEach(({ s, off }) => {
+          const u = (t * 0.35 + off) % 1;
+          s.position.set(Math.sin(u * 5 + off * 9) * 0.25 + u * 0.5, u * 1.3, 0);
+          const k = 0.18 + u * 0.22;
+          s.scale.set(k, k, k);
+          s.material.opacity = Math.sin(u * Math.PI) * 0.85 * fade;
+        });
+      }
+    };
+  };
 })();

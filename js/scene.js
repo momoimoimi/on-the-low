@@ -151,6 +151,12 @@
 
   // Now and then it sneaks a look by itself
   let sneak = 0, nextSneak = 6 + Math.random() * 4;
+
+  // By day it sleeps behind the rock: z's drift up over the top. The radio wakes it.
+  const phase = OTL.time ? OTL.time.phase : 'night';
+  const zzz = OTL.createZzz();
+  scene.add(zzz.group);
+  const idleGlow = phase === 'deep' ? 0.4 : 0.15;   // late at night the crystals stay a little lit
   const sneakCurve = u => (u <= 0 || u >= 1) ? 0 : Math.sin(Math.PI * u) ** 0.6;
 
   /* ---------- Render loop ---------- */
@@ -162,20 +168,25 @@
     peek += (peekTarget - peek) * 0.06;
 
     // Sneaking out: a short look on its own, or a steady half-step out while the radio plays
-    if (!reduce && t > nextSneak) { sneak = t; nextSneak = t + 9 + Math.random() * 6; }
     const listening = performance.now() / 1000 - lastStepAt < 0.6 ? 1 : 0;
+    const asleep = phase === 'day' && !listening;
+    if (!reduce && !asleep && t > nextSneak) { sneak = t; nextSneak = t + 9 + Math.random() * 6; }
     const outX = Math.max(sneakCurve((t - sneak) / 2.6) * 1.15, listening * 0.75);
     momo.position.x += (outX - momo.position.x) * 0.08;
 
-    momo.position.y = 0.98 + Math.sin(t * 2) * 0.04 * sway + kickPulse * 0.16;
+    const breathe = asleep ? Math.sin(t * 0.9) * 0.025 : Math.sin(t * 2) * 0.04;
+    momo.position.y = 0.98 + breathe * sway + kickPulse * 0.16;
     body.scale.y = 1 - kickPulse * 0.06;
-    // Face whoever is looking; lean toward the open side when sneaking
+    // Face whoever is looking; lean toward the open side when sneaking; nod off when asleep
     momo.rotation.y += ((peek * 0.6 + Math.sin(t * 0.5) * 0.12 * sway) - momo.rotation.y) * 0.05;
-    momo.rotation.z = Math.sin(t * 1.6) * 0.04 * sway - momo.position.x * 0.12;
+    const lean = asleep ? 0.28 : Math.sin(t * 1.6) * 0.04 * sway - momo.position.x * 0.12;
+    momo.rotation.z += (lean - momo.rotation.z) * 0.05;
+    zzz.group.position.set(momo.position.x + 0.35, 1.95, momo.position.z);
+    zzz.update(t, asleep && !reduce);
 
     crystals.forEach(c => {
       c.pulse *= 0.92;
-      c.mat.emissiveIntensity = 0.15 + c.pulse * 1.1;
+      c.mat.emissiveIntensity = idleGlow + c.pulse * 1.1;
       c.light.intensity = c.pulse * 1.4;
     });
     lantern.intensity = 0.8 + Math.sin(t * 3.1) * 0.08 + kickPulse * 0.4;
