@@ -124,7 +124,7 @@ h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(30px, 5vw
 .onair.live { color: var(--moss); }
 .onair.live i { background: var(--moss); box-shadow: 0 0 10px var(--moss); }
 .gridscroll { overflow-x: auto; padding-bottom: 4px; }
-.seq { display: grid; grid-template-columns: 64px repeat(16, minmax(22px, 1fr)); gap: 4px; min-width: 520px; }
+.seq { display: grid; grid-template-columns: 64px repeat(16, minmax(26px, 1fr)); gap: 4px; min-width: 560px; }
 .seq .lbl { font-family: var(--f-mono); font-size: 11px; color: var(--dim); display: flex; align-items: center; letter-spacing: .04em; }
 .seq .lbl.drum { color: var(--glow); }
 .pad {
@@ -186,6 +186,11 @@ button.tape:hover { border-color: var(--tape); }
 @keyframes reel { to { transform: rotate(360deg); } }
 
 @media (max-width: 560px) {
+  .shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .tape { min-height: 128px; padding: 12px 12px 10px; }
+  .tape-title { font-size: 16px; }
+  .tape-reels { gap: 16px; }
+  .tape-reels i { width: 24px; height: 24px; }
   .player { grid-template-columns: minmax(0, 1fr); }
   .transport { justify-items: stretch; }
   .progress { width: 100%; }

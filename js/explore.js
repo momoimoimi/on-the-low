@@ -135,6 +135,12 @@
   function hiddenFind(obj, id, label, mat) {
     const item = clickable(obj, { id, label, hidden: true, mat, onClick: () => { discover(id); } });
     hiddenItems.push(item);
+    // A larger invisible target around small finds, so they can be tapped with a finger
+    const hit = new THREE.Mesh(new THREE.SphereGeometry(0.42, 6, 4), new THREE.MeshBasicMaterial());
+    hit.visible = false;
+    hit.position.copy(obj.position);
+    hit.userData.item = item;
+    scene.add(hit); clickables.push(hit);
     return item;
   }
 
