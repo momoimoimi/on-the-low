@@ -50,6 +50,17 @@
     scene.add(m);
   }
 
+  // The hiding rock: sits between the camera and momoimoimi on purpose.
+  // Only the leaf tip shows over the top until you look around it.
+  const hideout = new THREE.Group();
+  const big = new THREE.Mesh(new THREE.DodecahedronGeometry(0.95, 0), flat(0x433a60));
+  big.scale.set(1.35, 1.7, 0.95); big.rotation.set(0.3, 0.5, 0.1);
+  const small = new THREE.Mesh(new THREE.DodecahedronGeometry(0.55, 0), flat(0x3a3254));
+  small.position.set(1.1, -0.7, 0.3); small.rotation.set(1, 0.2, 0.4);
+  hideout.add(big, small);
+  hideout.position.set(0, 0.93, 4.4);
+  scene.add(hideout);
+
   // Crystals: one per melody row of the radio
   const crystalColors = [0xff9f8c, 0xffc2a8, 0x9d8cff, 0x7fb4ff, 0x6fd6b8];
   const crystalSpots = [[-2.9, -0.6], [-1.7, -1.9], [0.2, -2.6], [2.0, -1.8], [3.0, -0.4]];
@@ -123,15 +134,38 @@
   new ResizeObserver(resize).observe(canvas);
   resize();
 
-  let mx = 0, my = 0;
-  window.addEventListener('pointermove', e => { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5; });
+  // Peeking: move the pointer across the hero (or drag / tap on a phone) to look around the rock.
+  // peek runs -1..1; at 0 the camera faces the rock and momoimoimi stays hidden.
+  const hero = canvas.parentElement;
+  let peekTarget = 0, peek = 0, my = 0, tapTimer = null;
+  const sideOf = e => {
+    const r = hero.getBoundingClientRect();
+    return Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 2.4));
+  };
+  hero.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return;
+    peekTarget = sideOf(e);
+    my = (e.clientY - hero.getBoundingClientRect().top) / hero.clientHeight - 0.5;
+  });
+  hero.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') { peekTarget = 0; my = 0; } });
+  hero.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'touch') return;
+    peekTarget = sideOf(e) < 0 ? -1 : 1;
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => { peekTarget = 0; }, 3500);
+  });
 
-  // React to the radio
-  let kickPulse = 0;
+  // React to the radio: while it plays, momoimoimi edges out from behind the rock
+  let kickPulse = 0, lastStepAt = -10;
   window.addEventListener('radio:step', e => {
+    lastStepAt = performance.now() / 1000;
     if (e.detail.kicked) kickPulse = 1;
     e.detail.notes.forEach((on, i) => { if (on && crystals[i]) crystals[i].pulse = 1; });
   });
+
+  // Now and then it sneaks a look by itself
+  let sneak = 0, nextSneak = 6 + Math.random() * 4;
+  const sneakCurve = u => (u <= 0 || u >= 1) ? 0 : Math.sin(Math.PI * u) ** 0.6;
 
   /* ---------- Render loop ---------- */
   const clock = new THREE.Clock();
@@ -139,10 +173,19 @@
     const t = clock.getElapsedTime();
     kickPulse *= 0.86;
     const sway = reduce ? 0 : 1;
+    peek += (peekTarget - peek) * 0.06;
+
+    // Sneaking out: a short look on its own, or a steady half-step out while the radio plays
+    if (!reduce && t > nextSneak) { sneak = t; nextSneak = t + 9 + Math.random() * 6; }
+    const listening = performance.now() / 1000 - lastStepAt < 0.6 ? 1 : 0;
+    const outX = Math.max(sneakCurve((t - sneak) / 2.6) * 1.15, listening * 0.75);
+    momo.position.x += (outX - momo.position.x) * 0.08;
+
     momo.position.y = 0.98 + Math.sin(t * 2) * 0.04 * sway + kickPulse * 0.16;
     body.scale.y = 0.95 - kickPulse * 0.06;
-    momo.rotation.y += ((mx * 0.8 + Math.sin(t * 0.5) * 0.15 * sway) - momo.rotation.y) * 0.05;
-    momo.rotation.z = Math.sin(t * 1.6) * 0.04 * sway;
+    // Face whoever is looking; lean toward the open side when sneaking
+    momo.rotation.y += ((peek * 0.6 + Math.sin(t * 0.5) * 0.12 * sway) - momo.rotation.y) * 0.05;
+    momo.rotation.z = Math.sin(t * 1.6) * 0.04 * sway - momo.position.x * 0.12;
 
     crystals.forEach(c => {
       c.pulse *= 0.92;
@@ -159,9 +202,9 @@
     }
     ffGeo.attributes.position.needsUpdate = true;
 
-    camera.position.x += ((mx * 1.2) - camera.position.x) * 0.03;
-    camera.position.y += ((2.3 - my * 0.6) - camera.position.y) * 0.03;
-    camera.lookAt(0, 0.9, 0);
+    camera.position.x = peek * 3.6;
+    camera.position.y += ((2.3 - my * 0.6) - camera.position.y) * 0.05;
+    camera.lookAt(momo.position.x * 0.5, 0.9, 0.4);
     if (renderer) renderer.render(scene, camera);
     requestAnimationFrame(frame);
   }
