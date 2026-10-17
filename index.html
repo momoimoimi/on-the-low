@@ -1,0 +1,553 @@
+<title>on the low</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one underground "base" seen from the entrance: 3D hideout hero → character ID file → base radio sequencer. Deliberately single dark theme (it's a hideout at night). */
+:root {
+  --night: #15121f;      /* base walls */
+  --cave: #221d33;       /* raised surfaces */
+  --rock: #3a3254;       /* lines, inactive pads */
+  --fog: #ece6f6;        /* text */
+  --dim: #a59cbc;        /* secondary text */
+  --momo: #ff9f8c;       /* peach: momoimoimi */
+  --glow: #9d8cff;       /* crystal lavender */
+  --moss: #6fd6b8;       /* leaf / status */
+  --f-display: "Dela Gothic One", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --f-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+  --f-mono: "DM Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--night);
+  color: var(--fog);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.75;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--momo); outline-offset: 3px; }
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Top bar */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: color-mix(in srgb, var(--night) 82%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rock);
+}
+.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.mark { font-family: var(--f-display); font-size: 18px; letter-spacing: .02em; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.mark svg { width: 22px; height: 22px; }
+.bar nav { display: flex; gap: 20px; font-family: var(--f-mono); font-size: 13px; letter-spacing: .08em; }
+.bar nav a { text-decoration: none; color: var(--dim); }
+.bar nav a:hover { color: var(--fog); }
+
+/* Hero */
+.hero { position: relative; height: clamp(440px, 72vh, 680px); overflow: hidden; }
+#scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero-copy {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding-block: 28px 36px;
+  background: linear-gradient(to top, var(--night) 10%, transparent);
+  pointer-events: none;
+}
+.hero-copy .wrap { display: grid; gap: 10px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--momo); }
+h1 {
+  font-family: var(--f-display); font-weight: 400;
+  font-size: clamp(56px, 12vw, 132px); line-height: .9; margin: 0;
+  letter-spacing: -.02em; text-wrap: balance;
+}
+h1 .low { color: var(--momo); }
+.hero-copy p { margin: 0; max-width: 34em; color: var(--dim); }
+.hero-copy .btn { pointer-events: auto; justify-self: start; margin-top: 6px; }
+
+.btn {
+  font: 500 14px/1 var(--f-body);
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--momo); background: var(--momo); color: var(--night);
+  text-decoration: none;
+}
+.btn.ghost { background: transparent; color: var(--fog); border-color: var(--rock); }
+.btn:hover { filter: brightness(1.08); }
+
+section.block { padding-block: 72px; border-top: 1px solid var(--rock); }
+h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(30px, 5vw, 46px); line-height: 1.1; margin: 0 0 8px; text-wrap: balance; }
+.lead { color: var(--dim); max-width: 36em; margin: 0; }
+
+/* Character file */
+.chara { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 40px; align-items: start; margin-top: 32px; }
+.idcard {
+  background: var(--cave); border: 1px solid var(--rock); border-radius: 6px;
+  padding: 22px 22px 18px; position: relative;
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+}
+.idcard header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px dashed var(--rock); }
+.idcard header b { color: var(--moss); font-weight: 500; }
+.idcard .name { font-family: var(--f-display); font-size: 34px; line-height: 1.2; margin: 14px 0 0; color: var(--momo); }
+.idcard .roma { font-family: var(--f-mono); font-size: 12px; letter-spacing: .3em; color: var(--dim); margin: 0 0 14px; }
+.idcard dl { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 8px 14px; margin: 0; font-size: 15px; }
+.idcard dt { color: var(--dim); font-size: 13px; }
+.idcard dd { margin: 0; }
+.idcard .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.chara .story { display: grid; gap: 16px; }
+.chara .story p { margin: 0; max-width: 34em; }
+.note { font-family: var(--f-mono); font-size: 12px; color: var(--dim); letter-spacing: .04em; }
+
+/* Radio */
+.radio-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 20px; }
+.deck {
+  margin-top: 28px; background: var(--cave); border: 1px solid var(--rock); border-radius: 10px;
+  padding: 18px; display: grid; gap: 16px;
+}
+.controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.controls label { font-family: var(--f-mono); font-size: 12px; color: var(--dim); display: flex; align-items: center; gap: 10px; }
+.controls input[type=range] { accent-color: var(--momo); width: 120px; }
+.bpm { font-family: var(--f-mono); font-variant-numeric: tabular-nums; color: var(--fog); min-width: 2.5em; }
+.onair { margin-left: auto; font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; color: var(--dim); display: flex; align-items: center; gap: 8px; }
+.onair i { width: 8px; height: 8px; border-radius: 50%; background: var(--rock); }
+.onair.live { color: var(--moss); }
+.onair.live i { background: var(--moss); box-shadow: 0 0 10px var(--moss); }
+.gridscroll { overflow-x: auto; padding-bottom: 4px; }
+.seq { display: grid; grid-template-columns: 64px repeat(16, minmax(22px, 1fr)); gap: 4px; min-width: 520px; }
+.seq .lbl { font-family: var(--f-mono); font-size: 11px; color: var(--dim); display: flex; align-items: center; letter-spacing: .04em; }
+.seq .lbl.drum { color: var(--glow); }
+.pad {
+  aspect-ratio: 1; max-width: 100%; border: 0; border-radius: 3px; padding: 0; cursor: pointer;
+  background: var(--rock); opacity: .55; transition: transform .08s, opacity .08s;
+}
+.pad.beat { opacity: .8; }
+.pad[aria-pressed="true"] { opacity: 1; background: var(--momo); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); border-radius: 0; }
+.pad.drum[aria-pressed="true"] { background: var(--glow); }
+.pad.now { outline: 1px solid var(--fog); outline-offset: 1px; }
+.pad.now[aria-pressed="true"] { transform: scale(1.18); }
+.hint { margin: 0; font-size: 13px; color: var(--dim); }
+
+footer { border-top: 1px solid var(--rock); padding-block: 28px 40px; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-family: var(--f-mono); font-size: 12px; color: var(--dim); letter-spacing: .06em; }
+
+@media (max-width: 760px) {
+  .chara { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .bar nav { gap: 14px; }
+  section.block { padding-block: 56px; }
+  .onair { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pad { transition: none; }
+}
+</style>
+
+<div class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top" aria-label="on the low トップへ">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 22,9 18,21 6,21 2,9" fill="#ff9f8c"/><polygon points="12,2 22,9 12,12" fill="#ffc2b4"/><polygon points="2,9 12,12 6,21" fill="#e07d6c"/></svg>
+      on the low
+    </a>
+    <nav aria-label="ページ内">
+      <a href="#momoimoimi">CHARA</a>
+      <a href="#radio">RADIO</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero" id="top">
+  <canvas id="scene" aria-label="ローポリの秘密基地でヘッドホンをつけたももいもいみが揺れている3Dシーン"></canvas>
+  <div class="hero-copy">
+    <div class="wrap">
+      <span class="eyebrow">secret base / B3F</span>
+      <h1>on the <span class="low">low</span></h1>
+      <p>ひっそりとした秘密基地。ローポリと低い音でできた、ももいもいみの隠れ家へようこそ。</p>
+      <a class="btn" href="#radio">基地ラジオを聴く</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="block" id="momoimoimi">
+    <div class="wrap">
+      <span class="eyebrow">resident file</span>
+      <h2>ももいもいみ</h2>
+      <p class="lead">基地のいちばん奥に住んでいる、桃のかたちの住人。角ばっているのは、ポリゴンを節約しているから。</p>
+      <div class="chara">
+        <article class="idcard" aria-label="ももいもいみの住人ファイル">
+          <header><span>on the low / 住人 No.001</span><b>在室中</b></header>
+          <p class="name">ももいもいみ</p>
+          <p class="roma">MOMOIMOIMI</p>
+          <dl>
+            <dt>住んでいる所</dt><dd>on the low 地下3階</dd>
+            <dt>好きなもの</dt><dd>ローポリ、低い音、夜ふかし</dd>
+            <dt>特技</dt><dd>低音で床をちょっとだけ揺らす</dd>
+            <dt>いつも</dt><dd>ヘッドホンをしている</dd>
+            <dt>ポリゴン数</dt><dd class="num" id="polycount">計測中…</dd>
+          </dl>
+        </article>
+        <div class="story">
+          <p>ももいもいみは、地上ではほとんど見かけない。昼は基地で寝ていて、夜になるとヘッドホンをつけて、クリスタルを鳴らしながらビートを組んでいる。</p>
+          <p>上のシーンでゆれているのが本人。ラジオを再生すると、キックに合わせて跳ねて、メロディが鳴るたびに基地のクリスタルが光る。</p>
+          <p class="note">※ プロフィールは仮の文章です。設定が決まったら書きかえます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="radio">
+    <div class="wrap">
+      <div class="radio-head">
+        <div>
+          <span class="eyebrow">base radio</span>
+          <h2>基地ラジオ</h2>
+          <p class="lead">マスをタップしてビートを組みかえられるよ。上の5段がメロディ、下の3段がドラム。</p>
+        </div>
+      </div>
+      <div class="deck">
+        <div class="controls">
+          <button class="btn" id="play" type="button">▶ 再生</button>
+          <button class="btn ghost" id="shuffle" type="button">おまかせ</button>
+          <button class="btn ghost" id="clear" type="button">クリア</button>
+          <label for="tempo">BPM <input id="tempo" type="range" min="66" max="104" value="82"> <span class="bpm" id="bpmval">82</span></label>
+          <span class="onair" id="onair"><i></i>OFF AIR</span>
+        </div>
+        <div class="gridscroll"><div class="seq" id="seq" role="group" aria-label="ステップシーケンサー"></div></div>
+        <p class="hint">音は「再生」を押してから鳴ります。音量に気をつけてね。</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© on the low</span>
+    <span>ひっそり営業中</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- 3D: the hideout ---------- */
+  const canvas = document.getElementById('scene');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); }
+  catch (e) { canvas.style.background = 'radial-gradient(circle at 50% 60%, #3a3254, #15121f 70%)'; }
+
+  const scene = new THREE.Scene();
+  const NIGHT = 0x15121f;
+  scene.background = new THREE.Color(NIGHT);
+  scene.fog = new THREE.Fog(NIGHT, 9, 24);
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+  camera.position.set(0, 2.3, 7.6);
+
+  scene.add(new THREE.HemisphereLight(0xa99cff, 0x1d1830, 0.75));
+  const sun = new THREE.DirectionalLight(0xffc6b6, 0.85);
+  sun.position.set(3, 6, 4); scene.add(sun);
+  const lantern = new THREE.PointLight(0xff9f8c, 0.9, 9);
+  lantern.position.set(-2.2, 1.6, 1.2); scene.add(lantern);
+
+  const flat = (color, extra = {}) => new THREE.MeshStandardMaterial(Object.assign({ color, flatShading: true, roughness: 0.95, metalness: 0 }, extra));
+
+  // Ground: a faceted bowl that rises into cave walls
+  const ground = new THREE.PlaneGeometry(34, 34, 26, 26);
+  ground.rotateX(-Math.PI / 2);
+  const gp = ground.attributes.position;
+  for (let i = 0; i < gp.count; i++) {
+    const x = gp.getX(i), z = gp.getZ(i);
+    const d = Math.hypot(x, z * 1.15);
+    let y = (Math.random() - 0.5) * (d < 3 ? 0.12 : 0.5);
+    if (d > 4.5) y += Math.pow(d - 4.5, 1.5) * 0.55;
+    gp.setY(i, y);
+  }
+  ground.computeVertexNormals();
+  scene.add(new THREE.Mesh(ground, flat(0x2b2442)));
+
+  // Rocks around the walls
+  const rockMat = flat(0x3a3254);
+  for (let i = 0; i < 16; i++) {
+    const a = (i / 16) * Math.PI * 2 + Math.random() * 0.3;
+    const r = 5 + Math.random() * 2.5;
+    const s = 0.4 + Math.random() * 0.9;
+    const m = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), rockMat);
+    m.position.set(Math.cos(a) * r, s * 0.5 + (r - 4.5) * 0.4, Math.sin(a) * r - 1);
+    m.rotation.set(Math.random() * 3, Math.random() * 3, 0);
+    scene.add(m);
+  }
+
+  // Crystals: one per melody row
+  const crystalColors = [0xff9f8c, 0xffc2a8, 0x9d8cff, 0x7fb4ff, 0x6fd6b8];
+  const crystalSpots = [[-2.9, -0.6], [-1.7, -1.9], [0.2, -2.6], [2.0, -1.8], [3.0, -0.4]];
+  const crystals = crystalSpots.map(([x, z], i) => {
+    const c = crystalColors[i];
+    const mat = flat(c, { emissive: c, emissiveIntensity: 0.15, roughness: 0.4 });
+    const g = new THREE.Group();
+    [[0, 0, 0, 1], [0.28, 0, 0.1, 0.6], [-0.22, 0, 0.15, 0.5]].forEach(([dx, , dz, s]) => {
+      const m = new THREE.Mesh(new THREE.OctahedronGeometry(0.32 * s, 0), mat);
+      m.scale.y = 2.6;
+      m.position.set(dx, 0.75 * s, dz);
+      m.rotation.z = dx * 0.6;
+      g.add(m);
+    });
+    g.position.set(x, 0, z);
+    scene.add(g);
+    const light = new THREE.PointLight(c, 0, 3.5);
+    light.position.set(x, 1, z + 0.4);
+    scene.add(light);
+    return { mat, light, pulse: 0 };
+  });
+
+  // Lantern prop
+  const lamp = new THREE.Mesh(new THREE.OctahedronGeometry(0.22, 0), flat(0xffd2c6, { emissive: 0xff9f8c, emissiveIntensity: 0.9 }));
+  lamp.position.copy(lantern.position);
+  scene.add(lamp);
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 1.4, 5), flat(0x4a4064));
+  post.position.set(-2.2, 0.7, 1.2); scene.add(post);
+
+  // Momoimoimi
+  const momo = new THREE.Group();
+  const parts = [];
+  const add = (geo, mat, setup) => { const m = new THREE.Mesh(geo, mat); setup && setup(m); momo.add(m); parts.push(m); return m; };
+  const body = add(new THREE.IcosahedronGeometry(0.9, 1), flat(0xff9f8c), m => m.scale.set(1, 0.95, 0.92));
+  add(new THREE.ConeGeometry(0.06, 0.32, 4), flat(0x7a5a48), m => m.position.set(0, 0.95, 0));
+  add(new THREE.ConeGeometry(0.2, 0.6, 4), flat(0x6fd6b8), m => { m.position.set(0.22, 1.02, 0); m.rotation.z = -1.1; m.scale.z = 0.35; });
+  const eyeMat = flat(0x1a1626);
+  [-0.28, 0.28].forEach(x => add(new THREE.SphereGeometry(0.075, 6, 4), eyeMat, m => m.position.set(x, 0.08, 0.83)));
+  const cheekMat = flat(0xff7f86, { emissive: 0xff7f86, emissiveIntensity: 0.2 });
+  [-0.5, 0.5].forEach(x => add(new THREE.CircleGeometry(0.11, 6), cheekMat, m => { m.position.set(x, -0.1, 0.74); m.rotation.y = x * 1.1; }));
+  const phoneMat = flat(0x2c2640);
+  add(new THREE.TorusGeometry(0.98, 0.07, 4, 14, Math.PI), phoneMat);
+  [-1, 1].forEach(s => add(new THREE.CylinderGeometry(0.24, 0.24, 0.2, 6), flat(0x9d8cff), m => { m.position.set(0.97 * s, 0, 0); m.rotation.z = Math.PI / 2; }));
+  [-0.35, 0.35].forEach(x => add(new THREE.DodecahedronGeometry(0.2, 0), flat(0xe8857a), m => m.position.set(x, -0.85, 0.15)));
+  momo.position.set(0, 0.98, 0.4);
+  scene.add(momo);
+
+  // Real polygon count for the ID card
+  const tris = parts.reduce((n, m) => n + (m.geometry.index ? m.geometry.index.count : m.geometry.attributes.position.count) / 3, 0);
+  document.getElementById('polycount').textContent = tris.toLocaleString('ja-JP') + ' 枚（実測）';
+
+  // Fireflies
+  const ffCount = 70, ffPos = new Float32Array(ffCount * 3), ffSeed = [];
+  for (let i = 0; i < ffCount; i++) {
+    ffSeed.push([Math.random() * 12 - 6, Math.random() * 3.5 + 0.3, Math.random() * 8 - 5, Math.random() * 6.28]);
+  }
+  const ffGeo = new THREE.BufferGeometry();
+  ffGeo.setAttribute('position', new THREE.BufferAttribute(ffPos, 3));
+  scene.add(new THREE.Points(ffGeo, new THREE.PointsMaterial({ color: 0xffc2b4, size: 0.06, transparent: true, opacity: 0.85 })));
+
+  // Sizing
+  function resize() {
+    if (!renderer) return;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.position.z = w < 600 ? 9.6 : 7.6;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+
+  let mx = 0, my = 0;
+  window.addEventListener('pointermove', e => { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5; });
+
+  /* ---------- Audio: the base radio ---------- */
+  const NOTES = [
+    { name: 'D5', f: 587.33 }, { name: 'B4', f: 493.88 }, { name: 'A4', f: 440.0 },
+    { name: 'G4', f: 392.0 }, { name: 'E4', f: 329.63 }
+  ];
+  const DRUMS = ['HAT', 'SNARE', 'KICK'];
+  const ROWS = NOTES.length + DRUMS.length, STEPS = 16;
+  const preset = [
+    '..........x.....',
+    '......x.......x.',
+    '...x.......x....',
+    '.x......x.......',
+    'x.........x.....',
+    '..x...x...x...xx',
+    '....x.......x...',
+    'x......x..x.....'
+  ];
+  let grid = preset.map(r => [...r].map(c => c === 'x'));
+
+  const seqEl = document.getElementById('seq');
+  const pads = [];
+  for (let r = 0; r < ROWS; r++) {
+    const isDrum = r >= NOTES.length;
+    const lbl = document.createElement('div');
+    lbl.className = 'lbl' + (isDrum ? ' drum' : '');
+    lbl.textContent = isDrum ? DRUMS[r - NOTES.length] : NOTES[r].name;
+    seqEl.appendChild(lbl);
+    pads.push([]);
+    for (let s = 0; s < STEPS; s++) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.id = `pad-${r}-${s}`;
+      b.className = 'pad' + (isDrum ? ' drum' : '') + (s % 4 === 0 ? ' beat' : '');
+      b.setAttribute('aria-label', `${lbl.textContent} ${s + 1}拍目`);
+      b.addEventListener('click', () => { grid[r][s] = !grid[r][s]; paint(); });
+      seqEl.appendChild(b);
+      pads[r].push(b);
+    }
+  }
+  function paint() { pads.forEach((row, r) => row.forEach((b, s) => b.setAttribute('aria-pressed', grid[r][s] ? 'true' : 'false'))); }
+  paint();
+
+  let ac = null, master, noiseBuf, wobble;
+  function initAudio() {
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+    const comp = ac.createDynamicsCompressor();
+    comp.threshold.value = -16; comp.ratio.value = 4;
+    const tone = ac.createBiquadFilter();
+    tone.type = 'lowpass'; tone.frequency.value = 4200;   // keep it low and soft
+    master = ac.createGain(); master.gain.value = 0.7;
+    master.connect(tone); tone.connect(comp); comp.connect(ac.destination);
+    noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    // tape wobble shared by the keys
+    wobble = ac.createOscillator(); wobble.frequency.value = 0.35;
+    const wg = ac.createGain(); wg.gain.value = 9; wobble.connect(wg); wobble.start();
+    wobble.out = wg;
+  }
+  function noise(t, dur, hp, vol) {
+    const src = ac.createBufferSource(); src.buffer = noiseBuf;
+    const f = ac.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = hp;
+    const g = ac.createGain();
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    src.connect(f); f.connect(g); g.connect(master);
+    src.start(t); src.stop(t + dur + 0.02);
+  }
+  function kick(t) {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.14);
+    g.gain.setValueAtTime(1, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.45);
+  }
+  function snare(t) {
+    noise(t, 0.2, 1400, 0.45);
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'triangle'; o.frequency.value = 190;
+    g.gain.setValueAtTime(0.25, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.12);
+  }
+  function hat(t) { noise(t, 0.05, 7500, 0.16); }
+  function key(t, f) {
+    const g = ac.createGain(), lp = ac.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.setValueAtTime(2400, t); lp.frequency.exponentialRampToValueAtTime(700, t + 0.6);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.012); g.gain.exponentialRampToValueAtTime(0.001, t + 0.9);
+    [['triangle', 0], ['sine', 7], ['sine', -1200]].forEach(([type, det]) => {
+      const o = ac.createOscillator(); o.type = type; o.frequency.value = f; o.detune.value = det;
+      wobble.out.connect(o.detune);
+      o.connect(lp); o.start(t); o.stop(t + 0.95);
+    });
+    lp.connect(g); g.connect(master);
+  }
+
+  let playing = false, step = 0, nextT = 0, timer = null, bpm = 82;
+  const events = [];
+  const stepDur = () => 60 / bpm / 4;
+  function schedule() {
+    while (nextT < ac.currentTime + 0.12) {
+      const swing = step % 2 ? stepDur() * 0.14 : 0;
+      const t = nextT + swing;
+      let kicked = false;
+      for (let r = 0; r < ROWS; r++) {
+        if (!grid[r][step]) continue;
+        if (r < NOTES.length) key(t, NOTES[r].f);
+        else if (r === ROWS - 3) hat(t);
+        else if (r === ROWS - 2) snare(t);
+        else { kick(t); kicked = true; }
+      }
+      events.push({ t, step, kicked, notes: NOTES.map((_, r) => grid[r][step]) });
+      nextT += stepDur();
+      step = (step + 1) % STEPS;
+    }
+  }
+  const playBtn = document.getElementById('play'), onair = document.getElementById('onair');
+  playBtn.addEventListener('click', async () => {
+    if (!ac) initAudio();
+    if (ac.state === 'suspended') await ac.resume();
+    playing = !playing;
+    if (playing) {
+      step = 0; nextT = ac.currentTime + 0.06;
+      timer = setInterval(schedule, 25); schedule();
+    } else {
+      clearInterval(timer); events.length = 0; markStep(-1);
+    }
+    playBtn.textContent = playing ? '■ 停止' : '▶ 再生';
+    onair.classList.toggle('live', playing);
+    onair.lastChild.textContent = playing ? 'ON AIR' : 'OFF AIR';
+  });
+  document.getElementById('clear').addEventListener('click', () => { grid = grid.map(r => r.map(() => false)); paint(); });
+  document.getElementById('shuffle').addEventListener('click', () => {
+    grid = grid.map((row, r) => row.map((_, s) => {
+      if (r < NOTES.length) return Math.random() < 0.08;
+      if (r === ROWS - 1) return s % 8 === 0 || Math.random() < 0.08;   // kick
+      if (r === ROWS - 2) return s % 8 === 4;                           // snare on 2 & 4
+      return s % 2 === 0 && Math.random() < 0.75;                        // hats
+    }));
+    paint();
+  });
+  const tempo = document.getElementById('tempo'), bpmval = document.getElementById('bpmval');
+  tempo.addEventListener('input', () => { bpm = +tempo.value; bpmval.textContent = bpm; });
+
+  let lastStep = -1;
+  function markStep(s) {
+    if (lastStep >= 0) pads.forEach(row => row[lastStep].classList.remove('now'));
+    if (s >= 0) pads.forEach(row => row[s].classList.add('now'));
+    lastStep = s;
+  }
+
+  /* ---------- Render loop ---------- */
+  let kickPulse = 0;
+  const clock = new THREE.Clock();
+  function frame() {
+    const t = clock.getElapsedTime();
+    if (ac && playing) {
+      while (events.length && events[0].t <= ac.currentTime) {
+        const ev = events.shift();
+        markStep(ev.step);
+        if (ev.kicked) kickPulse = 1;
+        ev.notes.forEach((on, i) => { if (on) crystals[i].pulse = 1; });
+      }
+    }
+    kickPulse *= 0.86;
+    const sway = reduce ? 0 : 1;
+    momo.position.y = 0.98 + Math.sin(t * 2) * 0.04 * sway + kickPulse * 0.16;
+    body.scale.y = 0.95 - kickPulse * 0.06;
+    momo.rotation.y += ((mx * 0.8 + Math.sin(t * 0.5) * 0.15 * sway) - momo.rotation.y) * 0.05;
+    momo.rotation.z = Math.sin(t * 1.6) * 0.04 * sway;
+
+    crystals.forEach(c => {
+      c.pulse *= 0.92;
+      c.mat.emissiveIntensity = 0.15 + c.pulse * 1.1;
+      c.light.intensity = c.pulse * 1.4;
+    });
+    lantern.intensity = 0.8 + Math.sin(t * 3.1) * 0.08 + kickPulse * 0.4;
+
+    for (let i = 0; i < ffCount; i++) {
+      const [x, y, z, p] = ffSeed[i];
+      ffPos[i * 3] = x + Math.sin(t * 0.3 + p) * 0.4 * sway;
+      ffPos[i * 3 + 1] = y + Math.sin(t * 0.7 + p * 2) * 0.25 * sway;
+      ffPos[i * 3 + 2] = z;
+    }
+    ffGeo.attributes.position.needsUpdate = true;
+
+    camera.position.x += ((mx * 1.2) - camera.position.x) * 0.03;
+    camera.position.y += ((2.3 - my * 0.6) - camera.position.y) * 0.03;
+    camera.lookAt(0, 0.9, 0);
+    if (renderer) renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
