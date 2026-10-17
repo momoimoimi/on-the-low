@@ -124,10 +124,11 @@
   }
 
   // Interactive things
-  const clickables = [];
+  const clickables = [], items = [];
   function clickable(obj, opts) {
     obj.traverse(o => { if (o.isMesh) { o.userData.item = opts; clickables.push(o); } });
     opts.obj = obj;
+    items.push(opts);
     return opts;
   }
   // Hidden finds glow when the pointer comes near, and twinkle now and then
@@ -327,11 +328,44 @@
   }
   $('prev').addEventListener('click', () => step(-1));
   $('next').addEventListener('click', () => step(1));
+
+  /* ---------- Keyboard: look around a room with ↑ ↓, search with Enter ---------- */
+  const tmp = new THREE.Vector3();
+  const angleOf = v => Math.atan2(v.x, -v.z);
+  function roomTargets() {
+    const a = rad(ROOMS[current].deg);
+    return items.filter(it => {
+      if (it.label === 'カセットテープ' && secretRoom.locked) return false;
+      it.obj.getWorldPosition(tmp);
+      const d = Math.abs(((angleOf(tmp) - a + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
+      return d < rad(30);
+    }).map(it => ({ it, x: it.obj.getWorldPosition(tmp).dot(right(a)) }))   // left to right as seen
+      .sort((p, q) => p.x - q.x).map(o => o.it);
+  }
+  let kbItem = null, kbIndex = -1;
+  const kbBox = new THREE.Box3();
+  const reticle = new THREE.Mesh(new THREE.RingGeometry(0.34, 0.42, 6), new THREE.MeshBasicMaterial({ color: 0xff9f8c, transparent: true, opacity: 0.9, depthTest: false }));
+  reticle.renderOrder = 10; reticle.visible = false;
+  scene.add(reticle);
+  function kbMove(dirn) {
+    const list = roomTargets();
+    if (!list.length) { kbItem = null; hint.textContent = 'この部屋には、もう気になるところがない。'; return; }
+    kbIndex = (kbIndex + dirn + list.length) % list.length;
+    kbItem = list[kbIndex];
+  }
+  function kbClear() { kbItem = null; kbIndex = -1; }
+  canvas.addEventListener('focus', () => { hint.textContent = '↑ ↓ で見まわして、Enter でしらべる。← → で部屋を移動。'; });
+  canvas.addEventListener('blur', kbClear);
+  canvas.addEventListener('pointerdown', kbClear);
+
   window.addEventListener('keydown', e => {
     if (e.key === 'Escape' && !memo.hidden) closeMemo();
     if (!memo.hidden) return;
-    if (e.key === 'ArrowLeft') step(-1);
-    if (e.key === 'ArrowRight') step(1);
+    if (e.key === 'ArrowLeft') { step(-1); kbClear(); }
+    if (e.key === 'ArrowRight') { step(1); kbClear(); }
+    if (document.activeElement !== canvas) return;
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); kbMove(e.key === 'ArrowDown' ? 1 : -1); }
+    if ((e.key === 'Enter' || e.key === ' ') && kbItem) { e.preventDefault(); kbItem.onClick(); }
   });
 
   /* ---------- Pointer ---------- */
@@ -395,7 +429,12 @@
     torch.position.copy(camera.position).add(d.clone().multiplyScalar(1.5));
 
     // Hover
-    const item = memo.hidden ? pick() : null;
+    const item = memo.hidden ? (kbItem || pick()) : null;
+    reticle.visible = !!kbItem && memo.hidden;
+    if (kbItem) {
+      kbBox.setFromObject(kbItem.obj).getCenter(reticle.position);
+      reticle.quaternion.copy(camera.quaternion);
+    }
     if (item !== hovered) {
       hovered = item;
       canvas.style.cursor = item ? 'pointer' : '';
