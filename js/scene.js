@@ -111,7 +111,7 @@
   function resize() {
     if (!renderer) return;
     const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(OTL.pixelRatio());
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.position.z = w < 600 ? 9.6 : 7.6;
@@ -203,7 +203,6 @@
     camera.position.y += ((2.3 - my * 0.6) - camera.position.y) * 0.05;
     camera.lookAt(momo.position.x * 0.5, 0.9, 0.4);
     if (renderer) renderer.render(scene, camera);
-    requestAnimationFrame(frame);
   }
-  frame();
+  OTL.renderLoop(canvas, frame);
 })();

@@ -234,7 +234,7 @@
 
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(OTL.pixelRatio());
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     const narrow = w < 600;
@@ -255,7 +255,7 @@
 
   const clock = new THREE.Clock();
   let lvl = 0;
-  (function frame() {
+  OTL.renderLoop(canvas, function frame() {
     const t = clock.getElapsedTime();
     lvl += (OTL.synth.level() - lvl) * 0.25;
     hop *= 0.86;
@@ -284,6 +284,5 @@
     zzz.update(t, dozing && !reduce);
 
     renderer.render(scene, camera);
-    requestAnimationFrame(frame);
-  })();
+  });
 })();

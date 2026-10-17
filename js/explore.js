@@ -365,7 +365,7 @@
   let camBack = 0.5;
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(OTL.pixelRatio());
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.fov = w < 600 ? 66 : 55;
@@ -381,7 +381,7 @@
   });
   const clock = new THREE.Clock();
   const target = new THREE.Vector3();
-  (function frame() {
+  OTL.renderLoop(canvas, function frame() {
     const t = clock.getElapsedTime();
 
     // Turn toward the current room along the short way round
@@ -430,8 +430,7 @@
     zzz.update(t, phase === 'day' && !momoOut && !reduce);
 
     renderer.render(scene, camera);
-    requestAnimationFrame(frame);
-  })();
+  });
 
   /* ---------- Reset ---------- */
   const reset = $('reset');

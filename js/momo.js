@@ -5,6 +5,20 @@
   const OTL = (window.OTL = window.OTL || {});
   const MODEL_URL = 'models/momoimoimi.glb';
 
+  // Run a scene's frame() only while its canvas is on screen and the tab is visible,
+  // so phones don't spend battery drawing 3D nobody is looking at.
+  OTL.renderLoop = (canvas, frame) => {
+    let onScreen = true, raf = 0;
+    const tick = () => { raf = 0; frame(); schedule(); };
+    const schedule = () => { if (!raf && onScreen && !document.hidden) raf = requestAnimationFrame(tick); };
+    new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; schedule(); }).observe(canvas);
+    document.addEventListener('visibilitychange', schedule);
+    frame();
+    schedule();
+  };
+  // Phones get a lower pixel ratio: the faceted look survives it and it saves a lot of work
+  OTL.pixelRatio = () => Math.min(window.devicePixelRatio || 1, matchMedia('(pointer: coarse)').matches ? 1.5 : 2);
+
   const flat = (color, extra = {}) => new THREE.MeshStandardMaterial(Object.assign({ color, flatShading: true, roughness: 0.95, metalness: 0 }, extra));
   OTL.flat = flat;
 
