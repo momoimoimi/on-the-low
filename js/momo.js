@@ -74,6 +74,32 @@
     return { group, body };
   };
 
+  // The Mamekura pair: green beans. elder = 豆蔵豆蔵 (white brows, moustache, cane), otherwise 豆蔵豆行 (small, a sprout on top)
+  OTL.createBean = ({ elder = false } = {}) => {
+    const group = new THREE.Group(), body = new THREE.Group();
+    group.add(body);
+    const add = (geo, mat, setup) => { const m = new THREE.Mesh(geo, mat); setup && setup(m); body.add(m); return m; };
+    const r = elder ? 0.55 : 0.38;
+    const green = flat(elder ? 0x7cc46b : 0x8fd47a);
+    add(new THREE.IcosahedronGeometry(r, 1), green, m => { m.scale.set(0.78, 1.05, 0.72); });
+    const eye = flat(0x1a1626), white = flat(0xece6f6);
+    [-1, 1].forEach(s => {
+      add(new THREE.SphereGeometry(elder ? 0.045 : 0.06, 6, 4), eye, m => m.position.set(s * r * 0.3, r * 0.15, r * 0.66));
+      if (elder) add(new THREE.BoxGeometry(0.14, 0.035, 0.04), white, m => { m.position.set(s * r * 0.3, r * 0.32, r * 0.64); m.rotation.z = -s * 0.2; });
+      add(new THREE.DodecahedronGeometry(r * 0.24, 0), flat(elder ? 0x5ea24f : 0x6cb85c), m => m.position.set(s * r * 0.35, -r * 1.02, r * 0.1));
+    });
+    if (elder) {
+      add(new THREE.OctahedronGeometry(0.14, 0), white, m => { m.scale.set(1.6, 0.45, 0.6); m.position.set(0, -r * 0.08, r * 0.68); });
+      add(new THREE.CylinderGeometry(0.025, 0.025, 0.9, 5), flat(0x7a5a48), m => { m.position.set(r * 0.85, -0.12, 0.1); m.rotation.z = 0.1; });
+      add(new THREE.ConeGeometry(0.05, 0.18, 4), flat(0x7a5a48), m => m.position.set(0, r * 1.1, 0));
+    } else {
+      [-1, 1].forEach(s => add(new THREE.SphereGeometry(0.018, 4, 3), white, m => m.position.set(s * r * 0.3 + 0.015, r * 0.2, r * 0.7)));
+      add(new THREE.ConeGeometry(0.03, 0.16, 4), flat(0x7a5a48), m => m.position.set(0, r * 1.1, 0));
+      add(new THREE.ConeGeometry(0.09, 0.26, 4), flat(0x6fd6b8), m => { m.position.set(0.09, r * 1.22, 0); m.rotation.z = -1; m.scale.z = 0.35; });
+    }
+    return { group, body };
+  };
+
   // Sleeping z's that drift up from a point. update(t, on) each frame.
   OTL.createZzz = () => {
     const c = document.createElement('canvas');

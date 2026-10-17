@@ -43,6 +43,7 @@
   let lastFocus = null;
   function openMemo(f) {
     lastFocus = document.activeElement;
+    memo.querySelector('.eyebrow').textContent = f.eyebrow || 'found';
     memoTitle.textContent = f.title;
     memoText.textContent = f.text;
     memoLink.hidden = !f.link;
@@ -296,9 +297,40 @@
   momo.rotation.y = -rad(spot.room.deg);
   scene.add(momo);
   let momoOut = finds.has('momo') ? 1 : 0, momoComing = false;
-  clickable(momo, {
-    label: '……だれか、いる？',
-    onClick: () => { if (!momoOut) momoComing = true; discover('momo'); }
+  // Momoimoimi's meshes change when the Blender model swaps in, so it is hit-tested as a whole group
+  const momoItem = { label: '……だれか、いる？', obj: momo, onClick: () => { if (!momoOut) momoComing = true; discover('momo'); } };
+  items.push(momoItem);
+
+  /* The Mamekura pair: Mamezo minds the radio, Mameyuki runs about the crystals */
+  const mamezo = OTL.createBean({ elder: true });
+  put(mamezo.group, radioRoom, -1.95, 0.72, 1.7, 0.5);
+  const MAMEZO_LINES = [
+    'このラジオは、わしが若いころ地上で拾ってきたんじゃ。いまでも、ときどきだれかの声が混ざる。',
+    '豆行は、またクリスタルのところかの。あの子は音が好きでな。',
+    'ももいもいみ？ 昼はよう寝とるよ。夜になったら、ほれ、ラジオを鳴らしてみい。'
+  ];
+  let mamezoTalk = 0;
+  clickable(mamezo.group, {
+    label: '豆蔵豆蔵',
+    onClick: () => openMemo({ eyebrow: '住人 No.002', title: '豆蔵豆蔵', text: MAMEZO_LINES[mamezoTalk++ % MAMEZO_LINES.length] })
+  });
+
+  const mameyuki = OTL.createBean();
+  put(mameyuki.group, crystalRoom, 0, 0.5, 2.3);
+  const MAMEYUKI_LINES = [
+    'ぼくもクリスタル鳴らせるよ！ ……合言葉？ お父さんのラジオが知ってるって。',
+    'ももいもいみ、かくれんぼがすっごくうまいんだよ。',
+    'しーっ。ここ、ひみつきちだから。'
+  ];
+  let mameyukiTalk = 0;
+  clickable(mameyuki.group, {
+    label: '豆蔵豆行',
+    onClick: async () => {
+      await OTL.synth.ensure();
+      const n = OTL.synth.NOTES[Math.floor(Math.random() * 5)];
+      OTL.synth.key(OTL.synth.ctx.currentTime + 0.01, n.f * 2, 0.16);
+      openMemo({ eyebrow: '住人 No.003', title: '豆蔵豆行', text: MAMEYUKI_LINES[mameyukiTalk++ % MAMEYUKI_LINES.length] });
+    }
   });
 
   /* ---------- Navigation ---------- */
@@ -375,7 +407,10 @@
   const blockers = [...clickables, memoRock, shelf, boulder, ...bed.children];
   const pick = () => {
     ray.setFromCamera(ndc, camera);
-    const hit = ray.intersectObjects(blockers, false)[0];
+    const hits = ray.intersectObjects(blockers, false);
+    const m = ray.intersectObject(momo, true)[0];
+    if (m) { m.object = { userData: { item: momoItem } }; hits.push(m); hits.sort((p, q) => p.distance - q.distance); }
+    const hit = hits[0];
     return hit && hit.distance < 11 ? hit.object.userData.item || null : null;
   };
   function setNdc(e) {
@@ -392,8 +427,7 @@
   canvas.addEventListener('pointerup', e => {
     if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 10 || !memo.hidden) return;
     setNdc(e);
-    const item = pick();
-    if (item) item.onClick();
+    const item = pick();    if (item) item.onClick();
   });
 
   let camBack = 0.5;
@@ -465,6 +499,11 @@
     momo.position.y += Math.sin(t * 2) * 0.02 + (momoComing ? Math.abs(Math.sin(momoOut * Math.PI * 3)) * 0.35 : 0);
     if (!momoOut && !reduce) momo.position.y += Math.max(0, Math.sin(t * 0.7)) ** 12 * 0.25;   // a quick peek now and then
     body.scale.y = 1 + Math.sin(t * 3) * 0.015;
+    // Mameyuki hops back and forth in front of the crystals; Mamezo sways a little
+    const run = reduce ? 0 : Math.sin(t * 0.45) * 1.8;
+    mameyuki.group.position.copy(at(crystalRoom, run, 0.5 + (reduce ? 0 : Math.abs(Math.sin(t * 4)) * 0.18), 2.3));
+    mameyuki.group.rotation.y = -rad(crystalRoom.deg) + (reduce ? 0 : Math.cos(t * 0.45) * 0.9);
+    mamezo.body.rotation.z = reduce ? 0 : Math.sin(t * 0.8) * 0.04;
     zzz.group.position.copy(momo.position).setY(momo.position.y + 0.75);
     zzz.update(t, phase === 'day' && !momoOut && !reduce);
 
