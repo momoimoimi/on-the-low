@@ -10,7 +10,39 @@
   ];
   const DRUMS = ['HAT', 'SNARE', 'KICK'];
 
-  let ac = null, master, analyser, noiseBuf, wobble;
+  let ac = null, master, analyser, out, noiseBuf, wobble;
+
+  // Volume: three steps the visitor cycles through, remembered in this browser
+  const LEVELS = [{ v: 1, label: '大' }, { v: 0.4, label: '小' }, { v: 0, label: '消' }];
+  let level_i = 0;
+  try { level_i = Math.max(0, Math.min(2, +localStorage.getItem('otl-volume') || 0)); } catch (e) {}
+  const volume = () => LEVELS[level_i].v;
+  function applyVolume() {
+    if (out) out.gain.setTargetAtTime(volume(), ac.currentTime, 0.03);
+    // Tracks routed through the synth already get the gain above; others set their own volume
+    document.querySelectorAll('audio').forEach(a => { a.volume = a.dataset.routed ? 1 : volume(); });
+    document.querySelectorAll('.vol').forEach(b => {
+      b.querySelector('span').textContent = LEVELS[level_i].label;
+      b.setAttribute('aria-label', `音量：${LEVELS[level_i].label}（押すと切りかえ）`);
+      b.classList.toggle('muted', volume() === 0);
+    });
+  }
+  function addVolumeButton() {
+    const bar = document.querySelector('.bar .wrap');
+    if (!bar || bar.querySelector('.vol')) return;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'vol';
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="3,9 8,9 13,4 13,20 8,15 3,15" /><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" /></svg><span></span>';
+    b.addEventListener('click', () => {
+      level_i = (level_i + 1) % LEVELS.length;
+      try { localStorage.setItem('otl-volume', level_i); } catch (e) {}
+      applyVolume();
+    });
+    bar.appendChild(b);
+    applyVolume();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addVolumeButton);
+  else addVolumeButton();
 
   function init() {
     ac = new (window.AudioContext || window.webkitAudioContext)();
@@ -20,7 +52,8 @@
     tone.type = 'lowpass'; tone.frequency.value = 4200;   // keep it low and soft
     master = ac.createGain(); master.gain.value = 0.7;
     analyser = ac.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.82;
-    master.connect(tone); tone.connect(comp); comp.connect(analyser); analyser.connect(ac.destination);
+    out = ac.createGain(); out.gain.value = volume();
+    master.connect(tone); tone.connect(comp); comp.connect(analyser); analyser.connect(out); out.connect(ac.destination);
     noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
     const d = noiseBuf.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -86,6 +119,8 @@
       const src = ac.createMediaElementSource(el);
       src.connect(analyser);
       mediaNodes.set(el, src);
+      el.dataset.routed = '1';
+      el.volume = 1;
     }
   }
 

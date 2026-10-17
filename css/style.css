@@ -50,6 +50,17 @@ a { color: inherit; }
 .floors a:hover { color: var(--fog); }
 .floors a[aria-current="page"] { color: var(--fog); border-color: var(--rock); background: var(--cave); }
 .floors a[aria-current="page"] b { color: var(--momo); }
+.vol {
+  font: 500 12px/1 var(--f-mono); color: var(--dim);
+  display: inline-flex; align-items: center; gap: 4px;
+  min-height: 32px; padding: 0 10px; border-radius: 999px;
+  background: transparent; border: 1px solid var(--rock); cursor: pointer;
+}
+.vol svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.vol svg path { fill: none; }
+.vol:hover { color: var(--fog); }
+.vol.muted svg path { opacity: .2; }
+.bar .wrap > .floors { margin-left: auto; }
 
 /* Hero */
 .hero { position: relative; height: clamp(440px, 72vh, 680px); overflow: hidden; }
