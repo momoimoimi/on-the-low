@@ -14,6 +14,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0;
   background: var(--night);
@@ -192,6 +193,41 @@ button.tape:hover { border-color: var(--tape); }
 @media (prefers-reduced-motion: reduce) {
   .tape.playing .tape-reels i { animation: none; }
 }
+
+/* ---------- B3 explore ---------- */
+.explore { position: relative; height: clamp(500px, 80vh, 760px); overflow: hidden; }
+#cave { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.hud {
+  position: absolute; left: 0; right: 0; pointer-events: none;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.hud button, .hud a { pointer-events: auto; }
+.hud-top { top: 0; padding-block: 20px; display: flex; justify-content: space-between; align-items: start; gap: 16px; background: linear-gradient(to bottom, var(--night), transparent); }
+.room-name { font-family: var(--f-display); font-weight: 400; font-size: clamp(28px, 5vw, 48px); line-height: 1.15; margin: 4px 0 0; text-wrap: balance; }
+.counter { margin: 0; display: flex; align-items: baseline; gap: 6px; font-family: var(--f-mono); font-size: 12px; color: var(--dim); letter-spacing: .08em; white-space: nowrap; }
+.counter b { font-family: var(--f-display); font-weight: 400; font-size: 30px; color: var(--momo); font-variant-numeric: tabular-nums; }
+.hud-bottom { bottom: 0; padding-block: 18px 22px; display: grid; gap: 12px; justify-items: center; background: linear-gradient(to top, var(--night) 20%, transparent); }
+.hud-bottom .hint { margin: 0; min-height: 1.75em; text-align: center; color: var(--fog); font-size: 15px; }
+.roomnav { display: flex; align-items: center; gap: 16px; }
+.btn.round { width: 46px; height: 46px; padding: 0; justify-content: center; font-family: var(--f-mono); font-size: 18px; }
+.dots { list-style: none; display: flex; gap: 8px; margin: 0; padding: 0; }
+.dots li { width: 9px; height: 9px; background: var(--rock); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.dots li.on { background: var(--momo); }
+.memo {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(420px, calc(100% - 32px));
+  background: var(--cave); border: 1px solid var(--rock); border-radius: 8px;
+  padding: 22px 22px 18px; display: grid; gap: 10px; justify-items: start;
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+}
+.memo h2 { font-size: 26px; margin: 0; color: var(--momo); }
+.memo p { margin: 0; }
+.memo a { color: var(--glow); }
+.foundlist { list-style: none; padding: 0; margin: 24px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.foundlist li { padding: 12px 14px; border: 1px dashed var(--rock); border-radius: 6px; color: var(--dim); font-family: var(--f-mono); font-size: 13px; letter-spacing: .06em; }
+.foundlist li.got { border-style: solid; border-color: var(--momo); color: var(--fog); font-family: var(--f-body); letter-spacing: 0; }
+.foundlist li.got::before { content: "◆ "; color: var(--momo); }
 
 footer { border-top: 1px solid var(--rock); padding-block: 28px 40px; }
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-family: var(--f-mono); font-size: 12px; color: var(--dim); letter-spacing: .06em; }

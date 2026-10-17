@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>探検 | on the low</title>
+<meta name="description" content="on the low の地下3階。基地の奥を探検して、隠されたものを見つける。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="bar">
+  <div class="wrap">
+    <a class="mark" href="index.html" aria-label="on the low トップへ">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 22,9 18,21 6,21 2,9" fill="#ff9f8c"/><polygon points="12,2 22,9 12,12" fill="#ffc2b4"/><polygon points="2,9 12,12 6,21" fill="#e07d6c"/></svg>
+      on the low
+    </a>
+    <nav class="floors" aria-label="フロア">
+      <a href="index.html"><b>B1</b>入口</a>
+      <a href="music.html"><b>B2</b>音源ルーム</a>
+      <a href="explore.html" aria-current="page"><b>B3</b>探検</a>
+    </nav>
+  </div>
+</div>
+
+<main>
+  <section class="explore" aria-label="探検">
+    <canvas id="cave" aria-label="地下3階の洞くつ。部屋を移動しながら、隠されたものを探せる3Dシーン"></canvas>
+
+    <div class="hud hud-top">
+      <div>
+        <span class="eyebrow">secret base / B3 探検</span>
+        <h1 class="room-name" id="room-name">入口の通路</h1>
+      </div>
+      <p class="counter"><span>見つけたもの</span> <b id="count">0</b><span>/ 6</span></p>
+    </div>
+
+    <div class="hud hud-bottom">
+      <p class="hint" id="hint" aria-live="polite">気になるところを押してみて。</p>
+      <div class="roomnav">
+        <button class="btn ghost round" id="prev" type="button" aria-label="左の部屋へ">←</button>
+        <ol class="dots" id="dots" aria-label="部屋"></ol>
+        <button class="btn ghost round" id="next" type="button" aria-label="右の部屋へ">→</button>
+      </div>
+    </div>
+
+    <div class="memo" id="memo" role="dialog" aria-modal="false" aria-labelledby="memo-title" hidden>
+      <span class="eyebrow">found</span>
+      <h2 id="memo-title">メモ</h2>
+      <p id="memo-text"></p>
+      <p id="memo-link" hidden><a href="music.html">B2 音源ルームへ行く →</a></p>
+      <button class="btn" id="memo-close" type="button">とじる</button>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <span class="eyebrow">log</span>
+      <h2>見つけたもの</h2>
+      <p class="lead">基地のあちこちに、6つのものが隠れている。見つけたものは、このブラウザに記録されるよ。</p>
+      <ul class="foundlist" id="found-list"></ul>
+      <button class="btn ghost" id="reset" type="button">はじめからやりなおす</button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© on the low</span>
+    <span>ひっそり営業中</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="js/synth.js"></script>
+<script src="js/momo.js"></script>
+<script src="js/finds.js"></script>
+<script src="js/explore.js"></script>
+</body>
+</html>
