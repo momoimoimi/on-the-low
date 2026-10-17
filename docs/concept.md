@@ -183,6 +183,6 @@ docs/concept.md   このメモ
 - 区切りがついたら `v0.2`、`v0.3` とタグをつける
 - サイトづくりは Claude に任されている。作者の発想を組み合わせて、Claude のセンスで進める。迷ったら作者に聞く
 - `main` への push、タグの push は確認なしでどんどんやってOK
-- サイトの公開（GitHub Pages など）は、完成してから作者と決める
+- サイトは GitHub Pages で `main` からそのまま公開している：https://momoimoimi.github.io/on-the-low/ 。push すると30秒〜2分で反映される（2026-10-17 から）
 - コミットの名前は `momoimoimi`、メールは GitHub の noreply アドレス。本物のメールアドレスはどこにも書かない
 - `CLAUDE.md` と `blender/` は手元だけに置く（`.gitignore` 済み）
