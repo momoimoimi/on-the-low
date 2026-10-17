@@ -93,10 +93,17 @@
           <button class="btn" id="play" type="button">▶ 再生</button>
           <button class="btn ghost" id="shuffle" type="button">おまかせ</button>
           <button class="btn ghost" id="clear" type="button">クリア</button>
+          <button class="btn ghost" id="share" type="button">ビートを共有</button>
           <label for="tempo">BPM <input id="tempo" type="range" min="66" max="104" value="82"> <span class="bpm" id="bpmval">82</span></label>
           <span class="onair" id="onair"><i></i>OFF AIR</span>
         </div>
         <div class="gridscroll"><div class="seq" id="seq" role="group" aria-label="ステップシーケンサー"></div></div>
+        <div class="share-out" id="share-out" hidden>
+          <label for="share-url">このリンクを送ると、同じビートが届くよ</label>
+          <input id="share-url" type="text" readonly>
+          <span class="share-msg" id="share-msg" aria-live="polite"></span>
+        </div>
+        <p class="hint" id="beat-from" hidden>だれかが組んだビートが届いてる。「再生」で聴いてみて。</p>
         <p class="hint">音は「再生」を押してから鳴ります。音量に気をつけてね。</p>
       </div>
     </div>

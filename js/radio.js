@@ -67,5 +67,48 @@
     paint();
   });
   const tempo = document.getElementById('tempo'), bpmval = document.getElementById('bpmval');
-  tempo.addEventListener('input', () => { seq.bpm = +tempo.value; bpmval.textContent = seq.bpm; });
+  const setBpm = v => { seq.bpm = v; tempo.value = v; bpmval.textContent = v; };
+  tempo.addEventListener('input', () => setBpm(+tempo.value));
+
+  /* ---------- Sharing a beat ---------- */
+  // The grid is 8 x 16 on/off = 16 bytes, written as base64url in ?beat=, with ?bpm= beside it
+  const encode = g => {
+    const bytes = new Uint8Array(ROWS * STEPS / 8);
+    g.flat().forEach((on, i) => { if (on) bytes[i >> 3] |= 1 << (i & 7); });
+    return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  };
+  const decode = s => {
+    const bin = atob(s.replace(/-/g, '+').replace(/_/g, '/'));
+    if (bin.length !== ROWS * STEPS / 8) throw new Error('bad beat');
+    return Array.from({ length: ROWS }, (_, r) => Array.from({ length: STEPS }, (_, c) => {
+      const i = r * STEPS + c;
+      return !!(bin.charCodeAt(i >> 3) & (1 << (i & 7)));
+    }));
+  };
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('beat')) {
+    try {
+      grid = decode(params.get('beat'));
+      paint();
+      const b = +params.get('bpm');
+      if (b >= +tempo.min && b <= +tempo.max) setBpm(b);
+      document.getElementById('beat-from').hidden = false;
+    } catch (e) { /* a broken link just keeps the house beat */ }
+  }
+
+  const shareOut = document.getElementById('share-out'), shareUrl = document.getElementById('share-url'), shareMsg = document.getElementById('share-msg');
+  document.getElementById('share').addEventListener('click', async () => {
+    const url = `${location.origin}${location.pathname}?beat=${encode(grid)}&bpm=${seq.bpm}#radio`;
+    shareUrl.value = url;
+    shareOut.hidden = false;
+    try {
+      await navigator.clipboard.writeText(url);
+      shareMsg.textContent = 'リンクをコピーしたよ';
+    } catch (e) {
+      shareUrl.focus(); shareUrl.select();
+      shareMsg.textContent = 'リンクを選んだよ。コピーして送ってね';
+    }
+  });
+  shareUrl.addEventListener('focus', () => shareUrl.select());
 })();

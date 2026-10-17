@@ -152,6 +152,14 @@ h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(30px, 5vw
 .pad.now { outline: 1px solid var(--fog); outline-offset: 1px; }
 .pad.now[aria-pressed="true"] { transform: scale(1.18); }
 .hint { margin: 0; font-size: 13px; color: var(--dim); }
+#beat-from { color: var(--moss); }
+.share-out { display: grid; gap: 6px; }
+.share-out label { font-size: 13px; color: var(--dim); }
+.share-out input {
+  font: 13px/1.4 var(--f-mono); color: var(--fog); background: var(--night);
+  border: 1px solid var(--rock); border-radius: 6px; padding: 10px 12px; width: 100%; min-width: 0;
+}
+.share-msg { font-family: var(--f-mono); font-size: 12px; color: var(--moss); min-height: 1.4em; }
 
 /* ---------- B2 music room ---------- */
 .room-hero { position: relative; height: clamp(320px, 48vh, 460px); overflow: hidden; }
